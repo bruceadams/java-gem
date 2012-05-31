@@ -3,10 +3,13 @@
 A command line tool for creating a Ruby Gem from a Java package
 including all of its dependencies.
 
-Command line arguments:
+Required command line arguments:
  -group    a Maven group identifier
  -name     a Maven artifact identifier
  -version  a Maven version string
+
+Optional command line argument:
+ -repository the URL for a remote Maven repository
 
 Example run:
 
@@ -29,6 +32,5 @@ for a Maven server.
 
 ## License
 
-Copyright © 2012 Bruce Adams
-Distributed under the
+Copyright © 2012 Bruce Adams. Distributed under the
 [Eclipse Public License](http://www.eclipse.org/legal/epl-v10.html).

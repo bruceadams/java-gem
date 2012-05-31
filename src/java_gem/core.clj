@@ -7,6 +7,14 @@
 (import '(org.jruby.embed ScriptingContainer LocalContextScope))
 (def c (ScriptingContainer. LocalContextScope/THREADSAFE))
 
+
+;; This "delete-file-recursively" function is copied from Leiningen's
+;; test/leiningen/test/helper.clj
+;; https://github.com/technomancy/leiningen/blob/master/test/leiningen/test/helper.clj
+;; It falls under:
+;; Source Copyright © 2009-2012 Phil Hagelberg, Alex Osborne, Dan Larkin, and contributors.
+;; Distributed under the Eclipse Public License, the same as Clojure uses.
+
 ;; grumble, grumble; why didn't this make it into clojure.java.io?
 (defn delete-file-recursively
   "Delete file f. If it's a directory, recursively delete all its contents.
@@ -41,9 +49,9 @@ Raise an exception if any deletion fails unless silently is true."
       base)))
 
 (defn copy-files
-  [files]
+  [files target]
   (doseq [f files]
-    (io/copy f (io/file (str "lib/" (.getName f))))))
+    (io/copy f (io/file (str target (.getName f))))))
 
 (defn today
   "Today's date, formatted"
@@ -57,11 +65,16 @@ Raise an exception if any deletion fails unless silently is true."
     (str "[\"" (clojure.string/join "\", \"" x) "\"]")
     (pr-str x)))
 
+(defn gemify-version
+  "Modify a Maven legal version string into a Ruby Gem legal version string."
+  [version]
+  (clojure.string/replace version "-" "."))
+
 (defn gemspec-str
   "Return a Gem::Specification block of Ruby code."
   [{:keys [group name version]}]
   (let [data {:name        name
-              :version     version
+              :version     (gemify-version version)
               :authors     ["unknown"]
               :date        (today)
               :platform    "java"
@@ -76,6 +89,11 @@ Raise an exception if any deletion fails unless silently is true."
                       (str "  s." (.getName (first i)) " = " (ruby-const (last i)) "\n")))
          "end\n")))
 
+(def require-all "Dir[File.expand_path('*.jar', File.dirname(__FILE__))].each do |file|
+  require File.basename(file)
+end
+")
+
 (defn -main
   "Generate a Ruby Gem."
   [& raw-args]
@@ -84,10 +102,11 @@ Raise an exception if any deletion fails unless silently is true."
         gemspec-file (str name ".gemspec")
         project (lein-project options)]
     (let [jars (classpath/resolve-dependencies :dependencies project)]
-      (delete-file-recursively "lib")
+      (delete-file-recursively "lib" true)
       (.mkdir (io/file "lib"))
-      (io/copy (io/file "require-all.rb") (io/file (str "lib/" name ".rb")))
-      (copy-files jars)
+      (with-open [f (io/writer (io/file (io/file (str "lib/" name ".rb"))))]
+        (.write f require-all))
+      (copy-files jars "lib/")
       (with-open [f (io/writer (io/file gemspec-file))]
         (.write f (gemspec-str options)))
       (. c runScriptlet (str "require 'rubygems';"
