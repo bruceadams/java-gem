@@ -4,12 +4,12 @@ A command line tool for creating a Ruby Gem from a Java package
 including all of its dependencies.
 
 Required command line arguments:
- -group    a Maven group identifier
- -name     a Maven artifact identifier
- -version  a Maven version string
+* -group    a Maven group identifier
+* -name     a Maven artifact identifier
+* -version  a Maven version string
 
 Optional command line argument:
- -repository the URL for a remote Maven repository
+* -repository the URL for a remote Maven repository
 
 Example run:
 
