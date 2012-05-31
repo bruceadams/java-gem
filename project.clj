@@ -4,4 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [leiningen-core "2.0.0-preview4"]])
+                 [org.clojure/tools.cli "0.2.1"]
+                 [org.jruby/jruby-complete "1.6.7"]
+                 [leiningen-core "2.0.0-preview4"]]
+  :main java-gem.core)
