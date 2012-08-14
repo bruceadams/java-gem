@@ -1,4 +1,4 @@
-# java-gem
+# java-gem [![Build Status](https://secure.travis-ci.org/bruceadams/java-gem.png)](http://travis-ci.org/bruceadams/java-gem)
 
 A command line tool for creating a Ruby Gem from a Java package
 including all of its dependencies.
