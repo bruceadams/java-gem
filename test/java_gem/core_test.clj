@@ -2,6 +2,7 @@
   (:use clojure.test
         java-gem.core))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+(deftest gemify-version-test
+  (is (= "simpletext" (gemify-version "simpletext")))
+  (is (= "1.2.3.dotted" (gemify-version "1.2.3.dotted")))
+  (is (= "1.2.3.dashed" (gemify-version "1.2.3-dashed"))))
