@@ -9,7 +9,7 @@
 (def c (ScriptingContainer. LocalContextScope/THREADSAFE))
 
 (defn parse-args
-  "Parse command line arguments into a Leiningen project structure"
+  "Parse command line arguments"
   [raw-args]
   (let [[options args banner]
         (cli/cli raw-args
@@ -68,14 +68,10 @@
               :files       (for [f (.listFiles (io/file (str output "/lib")))]
                              (str "lib/" (.getName f)))
               :require_paths ["lib"]}]
-    (str "Gem::Specification.new do |s|\n"
-         (apply str (for [i data]
-                      (str "  s."
-                           (.getName (first i))
-                           " = "
-                           (ruby-const (last i))
-                           "\n")))
-         "end\n")))
+    (format "Gem::Specification.new do |s|\n%send\n"
+            (apply str (for [i data] (format "  s.%s = %s\n"
+                                             (.getName (first i))
+                                             (ruby-const (last i))))))))
 
 (def require-all "Dir[File.expand_path('*.jar', File.dirname(__FILE__))].each do |file|
   require File.basename(file)
