@@ -1,31 +1,12 @@
 (ns java-gem.core
   (:gen-class)
   (:require [leiningen.core.classpath :as classpath]
+            [fs.core :as fs]
             [clojure.tools.cli :as cli] ; missing dependencies
             [clojure.java.io :as io]))
 
 (import '(org.jruby.embed ScriptingContainer LocalContextScope))
 (def c (ScriptingContainer. LocalContextScope/THREADSAFE))
-
-
-;; This "delete-file-recursively" function is copied from Leiningen's
-;; test/leiningen/test/helper.clj
-;; https://github.com/technomancy/leiningen/blob/master/test/leiningen/test/helper.clj
-;; It falls under:
-;; Source Copyright © 2009-2012 Phil Hagelberg, Alex Osborne, Dan Larkin, and contributors.
-;; Distributed under the Eclipse Public License, the same as Clojure uses.
-
-;; grumble, grumble; why didn't this make it into clojure.java.io?
-(defn delete-file-recursively
-  "Delete file f. If it's a directory, recursively delete all its contents.
-Raise an exception if any deletion fails unless silently is true."
-  [f & [silently]]
-  (System/gc) ; This sometimes helps release files for deletion on windows.
-  (let [f (io/file f)]
-    (if (.isDirectory f)
-      (doseq [child (.listFiles f)]
-        (delete-file-recursively child silently)))
-    (io/delete-file f silently)))
 
 (defn parse-args
   "Parse command line arguments into a Leiningen project structure"
@@ -110,7 +91,7 @@ end
         libdir (str (:output options) "/lib")
         project (lein-project options)]
     (let [jars (classpath/resolve-dependencies :dependencies project)]
-      (delete-file-recursively libdir true)
+      (fs/delete-dir libdir)
       (.mkdir (io/file libdir))
       (with-open [f (io/writer (io/file (io/file (str libdir "/" name ".rb"))))]
         (.write f require-all))
