@@ -6,6 +6,6 @@
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.clojure/tools.cli "0.2.1"]
                  [fs "1.3.2"]
-                 [org.jruby/jruby-complete "1.6.7"]
-                 [leiningen-core "2.0.0-preview6"]]
+                 [org.jruby/jruby-complete "1.7.2"]
+                 [leiningen-core "2.0.0"]]
   :main java-gem.core)
