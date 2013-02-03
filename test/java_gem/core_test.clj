@@ -9,7 +9,8 @@
 
 (deftest parse-args-test
   (is (= {:group "group", :name "name",
-          :output ".", :repository nil, :version "1.0"}
+          :output ".", :repository nil, :version "1.0"
+          :help false :uber-gem false}
          (parse-args ["-g" "group" "-n" "name" "-v" "1.0"]))
       "Happy path"))
 
