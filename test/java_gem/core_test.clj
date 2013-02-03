@@ -14,12 +14,6 @@
          (parse-args ["-g" "group" "-n" "name" "-v" "1.0"]))
       "Happy path"))
 
-(deftest lein-project-test
-  (is (= {:name "name", :version "1.0", :dependencies [['group/name "1.0"]]}
-         (lein-project {:group "group", :name "name",
-                        :output ".", :repository nil, :version "1.0"}))
-      "Happy path"))
-
 (deftest gemspec-str-test
   (is (re-find #"Gem::Specification\.new do |s|
   s\.date = \"[-0-9]*\"

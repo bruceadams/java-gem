@@ -7,5 +7,5 @@
                  [org.clojure/tools.cli "0.2.1"]
                  [fs "1.3.2"]
                  [org.jruby/jruby-complete "1.7.2"]
-                 [leiningen-core "2.0.0"]]
+                 [com.cemerick/pomegranate "0.0.13"]]
   :main java-gem.core)

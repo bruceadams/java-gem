@@ -1,6 +1,6 @@
 (ns java-gem.core
   (:gen-class)
-  (:require [leiningen.core.classpath :as classpath]
+  (:require [cemerick.pomegranate.aether :as aether]
             [fs.core :as fs]
             [clojure.tools.cli :as cli] ; missing dependencies
             [clojure.java.io :as io]))
@@ -27,16 +27,6 @@
       (println banner)
       (System/exit 0))
     options))
-
-(defn lein-project
-  "Return a Leiningen project structure based on the user options"
-  [{:keys [group name repository version]}]
-  (let [base {:name name
-              :version version
-              :dependencies [[(symbol (str group "/" name)) version]]}]
-    (if repository
-      (conj base {:repositories {"extra-repo" {:url repository}}})
-      base)))
 
 (defn copy-files
   [files target]
@@ -90,10 +80,15 @@ end
   [& raw-args]
   (let [options (parse-args raw-args)
         name (:name options)
-        gemspec-file (str (:output options) "/" name ".gemspec")
-        libdir (str (:output options) "/lib")
-        project (lein-project options)
-        jars (classpath/resolve-dependencies :dependencies project)]
+        output (:output options)
+        gemspec-file (str output "/" name ".gemspec")
+        libdir (str output "/lib")
+        coordinates [[(symbol (str (:group options) "/" name))
+                      (:version options)]]
+        dependencies (aether/resolve-dependencies
+                      :coordinates coordinates
+                      :repositories (:repository options))
+        jars (aether/dependency-files dependencies)]
     (if (not (:uber-gem options))
       (throw (Exception. "uber-gem is currently required. Sorry about that!")))
     (fs/delete-dir libdir)
@@ -106,5 +101,5 @@ end
     (. c runScriptlet
        (str "require 'rubygems';"
             "require 'rubygems/gem_runner';"
-            "Dir.chdir '" (:output options) "';"
+            "Dir.chdir '" output "';"
             "Gem::GemRunner.new.run ['build', '" gemspec-file "']"))))
