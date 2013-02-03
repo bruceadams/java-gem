@@ -13,12 +13,19 @@
   [raw-args]
   (let [[options args banner]
         (cli/cli raw-args
-                 ["-g" "-group" "Maven group identifier of Java library"]
-                 ["-n" "-name" "Name of Java library"]
-                 ["-o" "-output" "Directory to write the Ruby Gem into"
+                 ["-h" "--help" "Show help" :default false :flag true]
+                 ["-g" "--group" "Maven group identifier of Java library"]
+                 ["-n" "--name" "Name of Java library"]
+                 ["-o" "--output" "Directory to write the Ruby Gem into"
                   :default "."]
-                 ["-r" "-repository" "Extra Maven repository URL to read from"]
-                 ["-v" "-version" "Version of Java library"])]
+                 ["-r" "--repository" "Extra Maven repository URL to read from"]
+                 ["-u" "--uber-gem" (str "Create a single gem containing"
+                                         " all of the Java dependencies")
+                  :default false :flag true]
+                 ["-v" "--version" "Version of Java library"])]
+    (when (:help options)
+      (println banner)
+      (System/exit 0))
     options))
 
 (defn lein-project
