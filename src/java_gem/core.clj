@@ -92,17 +92,19 @@ end
         name (:name options)
         gemspec-file (str (:output options) "/" name ".gemspec")
         libdir (str (:output options) "/lib")
-        project (lein-project options)]
-    (let [jars (classpath/resolve-dependencies :dependencies project)]
-      (fs/delete-dir libdir)
-      (.mkdir (io/file libdir))
-      (with-open [f (io/writer (io/file (io/file (str libdir "/" name ".rb"))))]
-        (.write f require-all))
-      (copy-files jars (str libdir "/"))
-      (with-open [f (io/writer (io/file gemspec-file))]
-        (.write f (gemspec-str options)))
-      (. c runScriptlet
-         (str "require 'rubygems';"
-              "require 'rubygems/gem_runner';"
-              "Dir.chdir '" (:output options) "';"
-              "Gem::GemRunner.new.run ['build', '" gemspec-file "']")))))
+        project (lein-project options)
+        jars (classpath/resolve-dependencies :dependencies project)]
+    (if (not (:uber-gem options))
+      (throw (Exception. "uber-gem is currently required. Sorry about that!")))
+    (fs/delete-dir libdir)
+    (.mkdir (io/file libdir))
+    (with-open [f (io/writer (io/file (io/file (str libdir "/" name ".rb"))))]
+      (.write f require-all))
+    (copy-files jars (str libdir "/"))
+    (with-open [f (io/writer (io/file gemspec-file))]
+      (.write f (gemspec-str options)))
+    (. c runScriptlet
+       (str "require 'rubygems';"
+            "require 'rubygems/gem_runner';"
+            "Dir.chdir '" (:output options) "';"
+            "Gem::GemRunner.new.run ['build', '" gemspec-file "']"))))
