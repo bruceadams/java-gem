@@ -4,16 +4,29 @@ A command line tool for creating a Ruby Gem from a Java package
 including all of its dependencies.
 
 Required command line arguments:
-* -group    a Maven group identifier
-* -name     a Maven artifact identifier
-* -version  a Maven version string
+* -g, --group       Maven group identifier of Java library
+* -n, --name        Name of Java library
+* -v, --version     Version of Java library
+* -u, --uber-gem    Create a single gem containing all of the Java dependencies. (Building skinny gems is not yet implemented.)
 
-Optional command line argument:
-* -repository the URL for a remote Maven repository
+Optional command line arguments:
+* -h, --help        Show help
+* -o, --output      Directory to write the Ruby Gem into (defaults to current working directory)
+* -r, --repository  Extra Maven repository URL to read from
 
 Example run:
 
-lein run -group org.apache.poi -name poi-ooxml -version 3.8
+    $ lein run --uber-gem --group org.apache.poi --name poi-ooxml --version 3.8
+
+Alternate run mechanism:
+
+* Compile a standalone Java jar:
+
+        $ lein uberjar
+
+* Run the executable jar:
+
+        $ java -jar target/java-gem-1.0.0-SNAPSHOT-standalone.jar --uber-gem --group org.apache.poi --name poi-ooxml --version 3.8
 
 ## Now
 
@@ -32,5 +45,5 @@ for a Maven server.
 
 ## License
 
-Copyright © 2012 Bruce Adams. Distributed under the
+Copyright © 2012, 2013 Bruce Adams. Distributed under the
 [Eclipse Public License](http://www.eclipse.org/legal/epl-v10.html).
