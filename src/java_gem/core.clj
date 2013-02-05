@@ -75,22 +75,13 @@
 end
 ")
 
-(defn -main
-  "Generate a Ruby Gem."
-  [& raw-args]
-  (let [options (parse-args raw-args)
-        name (:name options)
-        output (:output options)
-        gemspec-file (str output "/" name ".gemspec")
+(defn generate-uber-gem
+  ""
+  [{:keys [name output] :as options}
+   dependencies]
+  (let [gemspec-file (str output "/" name ".gemspec")
         libdir (str output "/lib")
-        coordinates [[(symbol (str (:group options) "/" name))
-                      (:version options)]]
-        dependencies (aether/resolve-dependencies
-                      :coordinates coordinates
-                      :repositories (:repository options))
         jars (aether/dependency-files dependencies)]
-    (if (not (:uber-gem options))
-      (throw (Exception. "uber-gem is currently required. Sorry about that!")))
     (fs/delete-dir libdir)
     (.mkdir (io/file libdir))
     (with-open [f (io/writer (io/file (io/file (str libdir "/" name ".rb"))))]
@@ -103,3 +94,22 @@ end
             "require 'rubygems/gem_runner';"
             "Dir.chdir '" output "';"
             "Gem::GemRunner.new.run ['build', '" gemspec-file "']"))))
+
+(defn generate-skinny-gem
+  ""
+  [options dependencies]
+  (throw (Exception. "uber-gem is currently required. Sorry about that!")))
+
+(defn -main
+  "Generate a Ruby Gem."
+  [& raw-args]
+  (let [{:keys [name group repository version uber-gem] :as options}
+          (parse-args raw-args)
+        coordinates [[(symbol (str group "/" name))
+                      version]]
+        dependencies (aether/resolve-dependencies
+                      :coordinates coordinates
+                      :repositories repository)]
+    (if uber-gem
+      (generate-uber-gem options dependencies)
+      (generate-skinny-gem options dependencies))))
