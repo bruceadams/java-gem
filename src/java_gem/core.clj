@@ -39,11 +39,12 @@
   []
   (.format (java.text.SimpleDateFormat. "yyyy-MM-dd") (java.util.Date.)))
 
+;;; FIXME: this should use hard quotes (apostrophes) for Ruby strings
 (defn ruby-const
   "Return a Ruby formatted constant."
   [x]
-  (if (seq? x)
-    (str "[\"" (string/join "\", \"" x) "\"]")
+  (if (coll? x)
+    (str "[" (string/join ", " (map ruby-const x)) "]")
     (pr-str x)))
 
 (defn gemify-version

@@ -14,6 +14,14 @@
          (parse-args ["-g" "group" "-n" "name" "-v" "1.0"]))
       "Happy path"))
 
+;;; FIXME: this should use hard quotes (apostrophes) for Ruby strings
+(deftest ruby-const-test
+  (is (= "\"abc\"" (ruby-const "abc")))
+  (is (= "123" (ruby-const 123)))
+  (is (= "[]" (ruby-const [])))
+  (is (= "[\"lib\"]" (ruby-const ["lib"])))
+  (is (= "[\"lib\", 123]" (ruby-const ["lib", 123]))))
+
 (deftest gemspec-str-test
   (is (re-find #"Gem::Specification\.new do |s|
   s\.date = \"[-0-9]*\"
