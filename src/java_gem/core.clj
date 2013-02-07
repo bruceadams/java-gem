@@ -84,20 +84,21 @@ Any collection or sequence becomes a Ruby array."
   [item dependencies]
   (->> item (find dependencies) first meta :file))
 
-
-
-(defn generate-uber-gem
+(defn build-lib
   ""
-  [{:keys [name output] :as options}
-   dependencies]
-  (let [gemspec-file (io/file output (str name ".gemspec"))
-        libdir (io/file output "lib")
-        jars (aether/dependency-files dependencies)]
+  [{:keys [name output]} jars]
+  (let [libdir (io/file output "lib")
+        rb (io/file libdir (str name ".rb"))]
     (fs/delete-dir libdir)
     (.mkdir libdir)
-    (with-open [f (io/writer (io/file libdir (str name ".rb")))]
+    (with-open [f (io/writer rb)]
       (.write f (ruby-require jars)))
-    (copy-files jars libdir)
+    (copy-files jars libdir)))
+
+(defn build-gem
+  ""
+  [{:keys [name output] :as options} others]
+  (let [gemspec-file (io/file output (str name ".gemspec"))]
     (with-open [f (io/writer gemspec-file)]
       (.write f (gemspec-str options)))
     (. c runScriptlet
@@ -106,21 +107,34 @@ Any collection or sequence becomes a Ruby array."
             "Dir.chdir '" output "';"
             "Gem::GemRunner.new.run ['build', '" gemspec-file "']"))))
 
-(defn generate-skinny-gem
+(defn uber-gem-resolution
   ""
-  [options dependencies]
-  (throw (Exception. "uber-gem is currently required. Sorry about that!")))
+  [dependencies]
+  (let [jars (aether/dependency-files dependencies)]
+    [jars []]))
+
+(defn skinny-gem-resolution
+  ""
+  [dependencies coordinates]
+  (let [this-item (first coordinates)
+        jar (file-for this-item  dependencies)
+        others (dissoc dependencies this-item)]
+    (println "Gem does not specific its dependencies!")
+    (println others)
+    [[jar] others]))
 
 (defn -main
   "Generate a Ruby Gem."
   [& raw-args]
-  (let [{:keys [name group repository version uber-gem] :as options}
+  (let [{:keys [name group repository output version uber-gem] :as options}
           (parse-args raw-args)
         coordinates [[(symbol (str group "/" name))
                       version]]
         dependencies (aether/resolve-dependencies
                       :coordinates coordinates
-                      :repositories repository)]
-    (if uber-gem
-      (generate-uber-gem   options dependencies)
-      (generate-skinny-gem options coordinates dependencies))))
+                      :repositories repository)
+        [jars others] (if uber-gem
+                        (uber-gem-resolution   dependencies)
+                        (skinny-gem-resolution dependencies coordinates))]
+    (build-lib options jars)
+    (build-gem options others)))
