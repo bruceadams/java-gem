@@ -41,11 +41,12 @@
 
 ;;; FIXME: this should use hard quotes (apostrophes) for Ruby strings
 (defn ruby-const
-  "Return a Ruby formatted constant."
+  "Return a Ruby formatted constant.
+Any collection or sequence becomes a Ruby array."
   [x]
-  (if (coll? x)
-    (str "[" (string/join ", " (map ruby-const x)) "]")
-    (pr-str x)))
+  (cond (coll? x) (str "[" (string/join ", " (map ruby-const x)) "]")
+        (symbol? x) (pr-str (str x))
+        :else (pr-str x)))
 
 (defn gemify-version
   "Modify a Maven legal version string into a Ruby Gem legal version string."

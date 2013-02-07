@@ -20,7 +20,8 @@
   (is (= "123" (ruby-const 123)))
   (is (= "[]" (ruby-const [])))
   (is (= "[\"lib\"]" (ruby-const ["lib"])))
-  (is (= "[\"lib\", 123]" (ruby-const ["lib", 123]))))
+  (is (= "[\"lib\", 123]" (ruby-const ["lib", 123])))
+  (is (= "[[:a, 1], [:b, \"fred\"]]" (ruby-const {:a 1 :b "fred"}))))
 
 (deftest gemspec-str-test
   (is (re-find #"Gem::Specification\.new do |s|
