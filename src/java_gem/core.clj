@@ -79,6 +79,13 @@ Any collection or sequence becomes a Ruby array."
   (str (string/join "\n" (map #(str "require '" (.getName %) "'") files))
        "\n"))
 
+(defn file-for
+  "Get the file path for one item"
+  [item dependencies]
+  (->> item (find dependencies) first meta :file))
+
+
+
 (defn generate-uber-gem
   ""
   [{:keys [name output] :as options}
@@ -116,4 +123,4 @@ Any collection or sequence becomes a Ruby array."
                       :repositories repository)]
     (if uber-gem
       (generate-uber-gem   options dependencies)
-      (generate-skinny-gem options dependencies))))
+      (generate-skinny-gem options coordinates dependencies))))
