@@ -56,7 +56,7 @@ Any collection or sequence becomes a Ruby array."
 (defn gemspec-str
   "Return a Gem::Specification block of Ruby code."
   [{:keys [group name version output]}]
-  (let [data {:name          name
+  (let [data {:name          (str group "+" name)
               :version       (gemify-version version)
               :authors       ["unknown"]
               :date          (today)
