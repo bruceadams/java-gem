@@ -76,8 +76,7 @@ Any collection or sequence becomes a Ruby array."
 (defn ruby-require
   "Ruby code to require each file"
   [files]
-  (str (string/join "\n" (map #(str "require '" (.getName %) "'") files))
-       "\n"))
+  (string/join "" (map #(str "require '" (.getName %) "'\n") files)))
 
 (defn file-for
   "Get the file path for one item"
