@@ -5,7 +5,9 @@
 (deftest gemify-version-test
   (is (= "simpletext" (gemify-version "simpletext")))
   (is (= "1.2.3.dotted" (gemify-version "1.2.3.dotted")))
-  (is (= "1.2.3.dashed" (gemify-version "1.2.3-dashed"))))
+  (is (= "1.2.3.dashed" (gemify-version "1.2.3-dashed")))
+  (is (= "1.2.3.comma" (gemify-version "1.2,3-comma")))
+  (is (= "1.2.3.sharp" (gemify-version "1.2.3#sharp"))))
 
 (deftest parse-args-test
   (is (= {:group "group", :name "name",

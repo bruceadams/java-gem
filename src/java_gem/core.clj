@@ -49,9 +49,10 @@ Any collection or sequence becomes a Ruby array."
         :else (pr-str x)))
 
 (defn gemify-version
-  "Modify a Maven legal version string into a Ruby Gem legal version string."
+  "Modify a Maven legal version string into a Ruby Gem legal version
+ string. Only digits, periods and lowercase letters."
   [version]
-  (string/replace version "-" "."))
+  (string/replace (string/lower-case version) #"[^0-9.a-z]" "."))
 
 (defn gemspec-str
   "Return a Gem::Specification block of Ruby code."
