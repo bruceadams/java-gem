@@ -3,7 +3,7 @@
   :url "https://github.com/bruceadams/java-gem"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.4.0"]
+  :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/tools.cli "0.2.1"]
                  [fs "1.3.2"]
                  [org.jruby/jruby-complete "1.7.2"]
