@@ -16,7 +16,7 @@
         (cli/cli raw-args
                  ["-h" "--help" "Show help" :default false :flag true]
                  ["-g" "--group" "Maven group identifier of Java library"]
-                 ["-n" "--name" "Name of Java library"]
+                 ["-n" "--name" "Name of Java library (Maven artifact name)"]
                  ["-o" "--output" "Directory to write the Ruby Gem into"
                   :default "."]
                  ["-r" "--repository" "Extra Maven repository URL to read from"]
@@ -57,7 +57,7 @@ Any collection or sequence becomes a Ruby array."
 (defn gemspec-str
   "Return a Gem::Specification block of Ruby code."
   [{:keys [group name version output]}]
-  (let [data {:name          (str group "+" name)
+  (let [data {:name          (str group "," name)
               :version       (gemify-version version)
               :authors       ["unknown"]
               :date          (today)
