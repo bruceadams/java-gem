@@ -130,9 +130,12 @@ Any collection or sequence becomes a Ruby array."
           (parse-args raw-args)
         coordinates [[(symbol (str group "/" name))
                       version]]
+        repos (if repository {"central" "http://repo1.maven.org/maven2/"
+                              "name" repository}
+                {"central" "http://repo1.maven.org/maven2/"})
         dependencies (aether/resolve-dependencies
                       :coordinates coordinates
-                      :repositories repository)
+                      :repositories repos)
         [jars others] (if uber-gem
                         (uber-gem-resolution   dependencies)
                         (skinny-gem-resolution dependencies coordinates))]
