@@ -1,4 +1,10 @@
-# java-gem [![Build Status](https://secure.travis-ci.org/bruceadams/java-gem.png)](http://travis-ci.org/bruceadams/java-gem)
+# java-gem
+
+## Dead project
+
+This project is dead. I enjoyed pursuing the idea, but it turns out to be a dead-end.
+
+## Old README content for historical interest
 
 A command line tool for creating a Ruby Gem from a Java package
 including all of its dependencies.
@@ -65,7 +71,7 @@ Alternate run mechanism:
 
         $ java -jar target/java-gem-1.0.0-SNAPSHOT-standalone.jar --uber-gem --group org.apache.poi --name poi-ooxml --version 3.8
 
-## Now
+### Now
 
 Right now, this tool is a working proof of concept. The code needs to
 be cleaned up for legibility, with tests and error handling.
@@ -84,7 +90,7 @@ The list of Maven artifacts for which I generated gems for comes from
 a quick (read: sloppy) attempt to grab the latest release version of
 every `jar` package in Maven Central.
 
-## Future
+### Future
 
 Instead of generating a uber-gem, as it does now, generate a gem for
 each individual Java library with gem dependencies that match the Java
@@ -94,7 +100,7 @@ Enhance this tool so it can run as a Ruby Gems server which will
 create gems on request. It could act as a Ruby Gem front-end server
 for a Maven server.
 
-## License
+### License
 
 Copyright © 2012, 2013 Bruce Adams. Distributed under the
 [Eclipse Public License](http://www.eclipse.org/legal/epl-v10.html),
